@@ -1,13 +1,13 @@
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve
 
-def show_roc_curves(ax, clf, generate):
+def show_roc_curves(ax, clf, generate, pandas=False):
 
     # generate test data
     n_samples = 10000
-    X0, Y0, Z0 = generate(n_samples, z=0)
-    X1, Y1, Z1 = generate(n_samples, z=1)
-    X_1, Y_1, Z_1 = generate(n_samples, z=-1)
+    X0, Y0, Z0 = generate(n_samples, z=0, pandas=pandas)
+    X1, Y1, Z1 = generate(n_samples, z=1, pandas=pandas)
+    X_1, Y_1, Z_1 = generate(n_samples, z=-1, pandas=pandas)
 
     # compute the roc curves
     Y0_pred = clf.predict_proba(X0)[:,1]
@@ -30,16 +30,18 @@ def show_roc_curves(ax, clf, generate):
     ax.set_ylabel('True positive rate')
     ax.set_title('ROC curve')
 
-def show_decision_boundary(ax, clf, generate):
+def show_decision_boundary(ax, clf, generate, pandas=False):
 
     # generate test data
     n_samples = 100000
-    X, Y, Z = generate(n_samples)
+    X, Y, Z = generate(n_samples, pandas=pandas)
 
     # predict
     preds = clf.predict_proba(X)[:,1]
 
     # plot
+    if pandas:
+        X = X.values
     dec = ax.tricontourf(X[:,0], X[:,1], preds.ravel(), 20, extend='both')
     plt.colorbar(dec, ax=ax)
 
@@ -51,13 +53,13 @@ def show_decision_boundary(ax, clf, generate):
     ax.set_ylabel('x2')
 
 
-def show_clf_output(ax, clf, generate):
+def show_clf_output(ax, clf, generate, pandas=False):
 
     # generate test data
     n_samples = 10000
-    X0, Y0, Z0 = generate(n_samples, z=0)
-    X1, Y1, Z1 = generate(n_samples, z=1)
-    X_1, Y_1, Z_1 = generate(n_samples, z=-1)
+    X0, Y0, Z0 = generate(n_samples, z=0, pandas=pandas)
+    X1, Y1, Z1 = generate(n_samples, z=1, pandas=pandas)
+    X_1, Y_1, Z_1 = generate(n_samples, z=-1, pandas=pandas)
 
     # compute the predictions
     Y0_pred = clf.predict_proba(X0)[:,1]
@@ -75,16 +77,16 @@ def show_clf_output(ax, clf, generate):
     ax.set_title('Classifier output')
     ax.set_xlabel('Classifier output f(X|Z=z)')
     
-def show_clf(clf, generate):
+def show_clf(clf, generate, pandas=False):
     
     # create the figure
     fig, ax  = plt.subplots(1, 3, figsize=(15, 5))
 
     # roc ruve
-    show_roc_curves(ax[0], clf, generate)
+    show_roc_curves(ax[0], clf, generate, pandas=pandas)
     
     # decision boundary
-    show_decision_boundary(ax[1], clf, generate)
+    show_decision_boundary(ax[1], clf, generate, pandas=pandas)
     
     # classifier output
-    show_clf_output(ax[2], clf, generate)
+    show_clf_output(ax[2], clf, generate, pandas=pandas)

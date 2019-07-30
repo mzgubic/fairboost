@@ -1,7 +1,8 @@
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 
-def generate_toys(n_samples, z=None, train=True):
+def generate_toys(n_samples, z=None, train=True, pandas=False):
     """
     Args:
         n_samples (int): number of examples to generate
@@ -34,7 +35,13 @@ def generate_toys(n_samples, z=None, train=True):
     X1[:,1] += Z1
     X = np.concatenate([X0, X1])
 
-    return X, Y, Z
+    if not pandas:
+        return X, Y, Z
+    if pandas:
+        XZ = np.concatenate([X, Z.reshape(-1,1)], axis=1)
+        X_df = pd.DataFrame(XZ, columns=['x1', 'x2', 'z'])
+        return X_df, Y, Z
+
 
 def show_variates(ax, generate):
     """
