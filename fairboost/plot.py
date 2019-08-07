@@ -90,3 +90,49 @@ def show_clf(clf, generate, pandas=False):
     
     # classifier output
     show_clf_output(ax[2], clf, generate, pandas=pandas)
+
+def test_poly_fit(N, generate):
+	# training and test sets
+	X, Y, Z = generate(N)
+	X_test, Y_test, Z_test = generate(N)
+	
+	# fit the models
+	clf = FairboostClassifier(Z, n_estimators=100)
+	clf.fit(X, Y)
+	    
+	# predict
+	F_test = clf.predict_proba(X_test)[:,1]
+	
+	# only take the signal values
+	x = X_test[Y_test==1]
+	f = F_test[Y_test==1]
+	z = Z_test[Y_test==1]
+	
+	# create bins
+	nbins=100
+	hist, edges = np.histogram(f, range=(0,1), bins=nbins)
+	centres = 0.5 * (edges[:-1] + edges[1:])
+	
+	# compute metrics over bins
+	idx = np.digitize(f, edges)
+	bin_means = [np.mean(z[idx==i]) for i in range(1, len(edges))]
+	bin_stds = [np.std(z[idx==i])/np.sqrt(len(z[idx==i])) for i in range(1, len(edges))]
+	
+	# fit the model
+	adv = PolynomialModel()
+	adv.fit(f, z)
+	adv.predict(f)
+	adv.negative_gradient(f)
+	
+	# create model response
+	xs = np.linspace(0,1,100)
+	ys = adv.predict(xs)
+	
+	fig, ax = plt.subplots(figsize=(10,10))
+	ax.scatter(f, z, alpha=0.1, color='darkblue')
+	ax.errorbar(centres, bin_means, xerr=0.5/nbins, yerr=bin_stds, color='orange')
+	ax.plot(xs, ys, color='red')
+	ax.set_xlabel('classifier output')
+	ax.set_ylabel('Z')
+	ax.set_xlim(0,1)
+	plt.show()
