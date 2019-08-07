@@ -122,7 +122,7 @@ def test_poly_fit(N, generate):
 	adv = PolynomialModel()
 	adv.fit(f, z)
 	adv.predict(f)
-	adv.negative_gradient(f)
+	adv.gradient(f)
 	
 	# create model response
 	xs = np.linspace(0,1,100)

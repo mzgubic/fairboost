@@ -23,6 +23,7 @@ def generate_toys(n_samples, z=None, train=True, pandas=False):
     if z == None:
         Z0 = np.zeros(n_samples//2)
         Z1 = np.random.normal(0, 1, size=n_samples//2)
+        #Z1 = np.random.uniform(-1, 2, size=n_samples//2)
     # or generate at specific value of Z (for evaluation purposes)
     else:
         Z0 = z * np.ones(n_samples//2)

@@ -1,3 +1,4 @@
+import numpy as np
 import scipy.optimize as spo
 
 class PolynomialModel:
@@ -38,9 +39,9 @@ class PolynomialModel:
         res = self._forward(X, *self.coefficients)
         return res
     
-    def negative_gradient(self, X):
+    def gradient(self, X):
         """
-        - A'(x) = - (a_1 + 2*a_2*x + 3*a_3*x**2 + n*a_n*x**(n-1))
+        A'(x) = (a_1 + 2*a_2*x + 3*a_3*x**2 + n*a_n*x**(n-1))
         """
         # loop over coefficients
         result = np.zeros(shape=X.shape)
